@@ -120,13 +120,57 @@
 
 #### <a id="mysql-exporter"></a>6-2-2. MySQL Exporter 설치 및 구성
 &emsp;**1) MySQL 설치**  
+- 설치 후 계정 및 DB 생성
+
+![alt text](<images/6-2-2-1)MySQL 설치.png>)
+
 &emsp;**2) MySQL Exporter 설치 (바이너리 방식)**  
+
+- 바이너리 설치
+
+![alt text](<images/6-2-2-2)MySQL Exporter 설치 (바이너리 방식)_1.png>)
+
+- 설치 완료
+
+![alt text](<images/6-2-2-2)MySQL Exporter 설치 (바이너리 방식)_2.png>)
+
 &emsp;**3) MySQL Exporter 설정**  
+
+- cnf 설정파일 생성
+
+![alt text](<images/6-2-2-3)MySQL Exporter 설정.png>)
+
 &emsp;**4) MySQL Exporter 서비스 등록**  
-&emsp;&emsp;**4-1) 서비스 등록 안 했을 경우 문제점**  
+
+&emsp;&emsp;**4-1) 서비스 등록 안 했을 경우 문제점** 
+
+- 서비스 미등록 시 재부팅 했을 경우 재실행해야함
+
+![alt text](<images/6-2-2-4-1)서비스 등록 안 했을 경우 문제점.png>)
+
 &emsp;&emsp;**4-2) 서비스 등록**  
+
+- 서비스 등록하여 재부팅 시 자동 실행 될 수 있도록 함
+
+![alt text](<images/6-2-2-4-2)서비스 등록.png>)
+
 &emsp;**5) Prometheus 설정**  
+
+- Prometheus.yaml 파일 내 mysql-exporter job 추가
+
+![alt text](<images/6-2-2-5)Prometheus 설정.png>)
+
 &emsp;**6) 확인**
+
+- Prometheus job 추가 확인
+
+![alt text](<images/6-2-2-6)확인.png>)
+
+- grafana 시각화 연결 확인
+
+![alt text](<images/6-2-2-6)확인2.png>)
+
+---
 
 #### <a id="nginx-exporter"></a>6-2-3. Nginx Exporter 설치 및 구성
 &emsp;**1) Nginx 설치**  
