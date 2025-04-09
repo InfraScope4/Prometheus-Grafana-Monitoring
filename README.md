@@ -196,7 +196,27 @@
 
 ### <a id="mysql-load-testing"></a>7-1. MySQL 부하 테스트 및 모니터링
 &emsp;**1) MySQL 부하 테스트 준비**  
+
+- mysql 부하테스트 라이브러리 sysbench 설치
+
+![alt text](<images/7-1-1)MySQL 부하 테스트 준비_1.png>)
+
+- 테스트용 DB 및 계정 생성
+
+![alt text](<images/7-1-1)MySQL 부하 테스트 준비_2.png>)
+![alt text](<images/7-1-1)MySQL 부하 테스트 준비_3.png>)
+
 &emsp;**2) MySQL 부하 테스트 및 모니터링**
+
+- sysbench oltp_read_write --table-size=100000 --threads=10 --time=60  
+(10개의 스레드로 60초 동안 sbtest DB에 10만 건의 데이터 읽기/쓰기 부하 테스트)
+
+![alt text](<images/7-1-2)MySQL 부하 테스트 및 모니터링_1.png>)
+
+- 모니터링 확인
+
+![alt text](<images/7-1-2)MySQL 부하 테스트 및 모니터링_2.png>)
+![alt text](<images/7-1-2)MySQL 부하 테스트 및 모니터링_3.png>)
 
 ### <a id="nginx-load-testing"></a>7-2. Nginx 부하 테스트 및 모니터링
 &emsp;**1) Nginx 부하 테스트 준비**  
@@ -209,6 +229,9 @@
 ---
 
 ## <a id="troubleshooting"></a>8. 🔫 트러블슈팅
+- MySQL Exporter 실행 시 cnf 파일 권한 문제 발생 -> 권한 설정 변경하여 실행 필수
+
+![alt text](<images/8. 트러블슈팅_1.png>)
 
 ---
 
