@@ -191,11 +191,78 @@
 ### <a id="spring-boot-monitoring"></a>6-3. Spring Boot 애플리케이션 모니터링 구축 (내부 메트릭 노출)
 
 &emsp;**1) Spring Boot Actuator 및 Micrometer 설정**  
-&emsp;**2) Spring Boot App 서비스 등록**  
-&emsp;**3) Prometheus 설정**  
-&emsp;**4) 확인**
 
----
+```
+spring:
+  application:
+    name: step01_basic
+
+server:
+  port: 81
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
+  endpoint:
+    prometheus:
+      access: unrestricted
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+```
+➡️application.yaml을 통해 /actuator/prometheus 경로를 외부에 노출
+```
+implementation 'org.springframework.boot:spring-boot-starter-actuator'
+implementation 'io.micrometer:micrometer-registry-prometheus'
+```
+➡️build.gradle을 통해 /actuator/prometheus 경로를 외부에 노출
+
+&emsp;**2) Spring Boot App 서비스 등록**  
+<spring-app사진>
+➡️Gradle로 .jar 파일 빌드 후 Ubuntu 서버에 업로드(경로 : /home/ubuntu/springapp.jar)
+```
+sudo tee /etc/systemd/system/springapp.service <<EOF
+[Unit]
+Description=Spring Boot Application
+After=network.target
+
+[Service]
+User=ubuntu
+ExecStart=/usr/bin/java -jar /home/ubuntu/springapp.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reexec
+sudo systemctl enable springapp
+sudo systemctl start springapp
+```
+➡️서버 재부팅 시 자동 실행되도록 systemd 등록
+&emsp;**3) Prometheus 설정**  
+```
+scrape_configs:
+  - job_name: 'spring-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:81']
+```
+➡️/etc/prometheus/prometheus.yml에 spring-app job 추가
+
+&emsp;**4) 확인**
+<프로메테우스 사진>
+➡️서비스 등록 후 서버를 껐다가 다시 켜도 정상적으로 Prometheous에서 up상태인것을 확인할 수 있음
+
+<그라파나 사진>
+➡️Grafana로 시각화(Dashboard ID:4701)
 
 ## <a id="monitoring"></a>7. 📊 모니터링 및 부하 테스트
 
@@ -229,8 +296,16 @@
 &emsp;**2) Nginx 부하 테스트 및 모니터링**
 
 ### <a id="spring-boot-load-testing"></a>7-3. Spring Boot 애플리케이션 부하 테스트 및 모니터링
-&emsp;**1) Spring Boot App 부하 테스트 준비**  
+&emsp;**1) Spring Boot App 부하 테스트 준비**
+```
+ab -n 1000 -c 50 http://localhost:8080/test1
+```
+➡️스트레스 주기 : 1000번 요청, 50개 동시 연결
 &emsp;**2) Spring Boot App 부하 테스트 및 모니터링**
+
+<stress test1 사진>
+<stress test1 사진>
+➡️🎉스트레스 테스트 성공!
 
 ---
 
