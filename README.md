@@ -170,21 +170,119 @@
 
 - Prometheus job 추가 확인
 
-![alt text](<images/6-2-2-6)확인.png>)
+![alt text](<images/6-2-2-6)확인_1.png>)
 
 - grafana 시각화 연결 확인
 
-![alt text](<images/6-2-2-6)확인2.png>)
+![alt text](<images/6-2-2-6)확인_2.png>)
 
 ---
 
 #### <a id="nginx-exporter"></a>6-2-3. Nginx Exporter 설치 및 구성
+
 &emsp;**1) Nginx 설치**  
+
+```
+sudo apt install nginx
+```
+
+<br>
+
 &emsp;**2) Nginx Stub Status 설정**  
+
+```
+# /etc/nginx/sites-enabled/default
+
+server {
+        location /stub_status {
+                stub_status;
+                allow 127.0.0.1;
+                deny all;
+        }
+}
+```
+**stub_status** 모듈을 사용해 Nginx의 내부 통계 정보를 보여주는 페이지 활성화
+
+<br>
+
 &emsp;**3) Nginx Exporter 설치 (바이너리 방식)**  
+
+```
+wget https://github.com/nginx/nginx-prometheus-exporter/releases/download/v1.4.1/nginx-prometheus-exporter_1.4.1_linux_amd64.tar.gz
+tar -xvzf nginx-prometheus-exporter_1.4.1_linux_amd64.tar.gz
+```
+파일 다운로드 & 압축 해제
+
+<br>
+
+```
+sudo mv nginx-prometheus-exporter /usr/local/bin/
+sudo chmod +x /usr/local/bin/nginx-prometheus-exporter
+```
+디렉토리로 이동 & 실행 권한 부여
+
+<br>
+
 &emsp;**4) Nginx Exporter 서비스 등록**  
+
+```
+# /etc/systemd/system/nginx_exporter.service
+
+[Unit]
+Description=Nginx Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/nginx-prometheus-exporter --nginx.scrape-uri=http://localhost:80/stub_status
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```
+# 서비스 시작 및 확인
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now nginx_exporter
+systemctl status nginx_exporter
+```
+
+<br>
+
 &emsp;**5) Prometheus 설정**  
+
+```
+# /etc/prometheus/prometheus.yml
+
+- job_name: 'nginx-exporter'
+    static_configs:
+      - targets: ['localhost:9113']
+```
+
+```
+# 서비스 시작 및 확인
+
+sudo systemctl restart prometheus
+sudo systemctl status prometheus
+```
+
+<br>
+
 &emsp;**6) 확인**
+
+- Prometheus에서 nginx exporter job 확인
+
+![alt text](<images/6-2-3-6-1)nginx_확인_1.png>)
+
+- grafana 시각화 연결 확인
+
+![alt text](<images/6-2-3-6-2)nginx_확인_2.png>)
+
+<br>
 
 ---
 
