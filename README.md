@@ -397,8 +397,32 @@ scrape_configs:
 ![alt text](<images/7-1-2)MySQL 부하 테스트 및 모니터링_3.png>)
 
 ### <a id="nginx-load-testing"></a>7-2. Nginx 부하 테스트 및 모니터링
+
 &emsp;**1) Nginx 부하 테스트 준비**  
+
+```
+sudo apt install apache2-utils
+```
+HTTP 서버의 성능을 측정하는 스트레스 테스트 도구인 Apache Bench 설치
+
+<br>
+
 &emsp;**2) Nginx 부하 테스트 및 모니터링**
+
+```
+ab -n 10000 -c 50 http://localhost:80/
+```
+50명의 사용자가 각각 10000번씩 요청
+
+<br>
+
+![alt text](<images/7-2-2-2)nginx_모니터링_2.png>)
+
+**모니터링 결과**
+
+![alt text](<images/7-2-2-1)nginx_모니터링_1.png>)
+
+<br>
 
 ### <a id="spring-boot-load-testing"></a>7-3. Spring Boot 애플리케이션 부하 테스트 및 모니터링
 &emsp;**1) Spring Boot App 부하 테스트 준비**
