@@ -215,16 +215,17 @@ management:
       export:
         enabled: true
 ```
-➡️application.yaml을 통해 /actuator/prometheus 경로를 외부에 노출
+➡️ application.yaml을 통해 /actuator/prometheus 경로를 외부에 노출
 ```
 implementation 'org.springframework.boot:spring-boot-starter-actuator'
 implementation 'io.micrometer:micrometer-registry-prometheus'
 ```
-➡️build.gradle을 통해 /actuator/prometheus 경로를 외부에 노출
+➡️ build.gradle을 통해 /actuator/prometheus 경로를 외부에 노출
 
 &emsp;**2) Spring Boot App 서비스 등록**  
-<spring-app사진>
-➡️Gradle로 .jar 파일 빌드 후 Ubuntu 서버에 업로드(경로 : /home/ubuntu/springapp.jar)
+<br>
+![alt text](<images/6-3-2) Spring Boot App 서비스 등록.png>)
+➡️ Gradle로 .jar 파일 빌드 후 Ubuntu 서버에 업로드(경로:/home/ubuntu/springapp.jar)
 ```
 sudo tee /etc/systemd/system/springapp.service <<EOF
 [Unit]
@@ -246,7 +247,7 @@ sudo systemctl daemon-reexec
 sudo systemctl enable springapp
 sudo systemctl start springapp
 ```
-➡️서버 재부팅 시 자동 실행되도록 systemd 등록
+➡️ 서버 재부팅 시 자동 실행되도록 systemd 등록
 &emsp;**3) Prometheus 설정**  
 ```
 scrape_configs:
@@ -255,14 +256,20 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:81']
 ```
-➡️/etc/prometheus/prometheus.yml에 spring-app job 추가
+➡️ /etc/prometheus/prometheus.yml에 spring-app job 추가
+
+<br>
 
 &emsp;**4) 확인**
-<프로메테우스 사진>
-➡️서비스 등록 후 서버를 껐다가 다시 켜도 정상적으로 Prometheous에서 up상태인것을 확인할 수 있음
+![alt text](<images/6-3-4) 확인.png>)
 
-<그라파나 사진>
-➡️Grafana로 시각화(Dashboard ID:4701)
+➡️ 서비스 등록 후 서버를 껐다가 다시 켜도 정상적으로 Prometheous에서 up상태인것을 확인할 수 있음
+
+
+
+![<그라파나 사진>](<images/6-3-4)확인2.png>)
+
+➡️ Grafana로 시각화(Dashboard ID:4701)
 
 ## <a id="monitoring"></a>7. 📊 모니터링 및 부하 테스트
 
@@ -300,12 +307,14 @@ scrape_configs:
 ```
 ab -n 1000 -c 50 http://localhost:8080/test1
 ```
-➡️스트레스 주기 : 1000번 요청, 50개 동시 연결
+➡️ 스트레스 주기 : 1000번 요청, 50개 동시 연결
+
 &emsp;**2) Spring Boot App 부하 테스트 및 모니터링**
 
-<stress test1 사진>
-<stress test1 사진>
-➡️🎉스트레스 테스트 성공!
+![alt text](<images/7-3-2) Spring Boot 애플리케이션 부하 테스트 및 모니터링.png>)
+
+![alt text](<images/7-3-2) Spring Boot 애플리케이션 부하 테스트 및 모니터링2.png>)
+➡️ 🎉스트레스 테스트 성공!
 
 ---
 
