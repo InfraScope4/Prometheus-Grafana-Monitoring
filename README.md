@@ -110,7 +110,7 @@
 
 #### <a id="prometheus-installation"></a>6-1-1. Prometheus 설치 (바이너리 방식)
 &emsp;**1) 설치 방식 선택 배경**  
-Prometheus는 다양한 설치 방식(바이너리, 패키지 매니저, Docker 등)을 지원하지만, 최신 버전 유지와 설정 유연성을 고려하여 바이너리 설치 방식을 선택 
+Prometheus는 다양한 설치 방식(APT, Docker, 바이너리 등)을 지원하지만, 최신 버전 유지와 설정 유연성을 고려하여 바이너리 설치 방식을 선택 
 
 &emsp;**2) 설치 절차**
  1. Prometheus 전용 사용자 계정 생성
@@ -219,8 +219,82 @@ Prometheus 서비스가 성공적으로 실행되었는지 확인
     아직 메트릭을 수집할 타겟(exporter) 이 등록되지 않았기 때문에 위와 같은 화면이 나옴
 
 #### <a id="grafana-installation"></a>6-1-2. Grafana 설치 (APT 패키지 방식)
+&emsp;**1) 설치 방식 선택 배경**  
+Grafana는 다양한 설치 방식(APT, Docker, 바이너리 등)을 제공하지만, 편리한 설치와 업데이트 및 서비스 관리를 고려하여 APT 패키지 방식을 선택
+
+&emsp;**2) 설치 절차**
+ 1. APT 패키지 설치 및 Grafana 저장소 등록
+    ```bash
+    # 필수 패키지 설치
+    sudo apt install -y apt-transport-https software-properties-common wget
+
+    # Grafana GPG 키 등록
+    wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+
+    # APT 저장소 등록
+    echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+    ```
+    ![alt text](<images/6-1-2.-2)-1.grafana 설치.png>)
+
+ 2. 저장소 등록 확인 및 패키지 목록 업데이트
+    ```bash
+    # 저장소 디렉토리 목록 확인
+    ls /etc/apt/sources.list.d/
+    ls -al /etc/apt/sources.list.d/
+
+    # grafana.list 파일의 내용 확인
+    cat /etc/apt/sources.list.d/grafana.list
+
+    # 패키지 목록 갱신
+    sudo apt update
+    ```
+    ![alt text](<images/6-1-2.-2)-2.grafana 설치.png>)
+
+ 3. Grafana 설치
+    ```bash
+    # 설치
+    sudo apt install -y grafana
+    ```
+    ![alt text](<images/6-1-2.-2)-3.grafana 설치.png>)
+
+&emsp;**3) Grafana 서비스 실행 및 상태 확인**    
+Grafana는 APT로 설치한 것만으로 서비스로 등록되며, 별도의 유닛 파일 작성이 필요 없음
+ 1. Grafana 서비스 상태 확인 
+    ```bash
+    # 서비스 상태 확인
+    systemctl status grafana-server
+    ```
+    ![alt text](<images/6-1-2.-3)-1.grafana 서비스 실행.png>)
+ 2. Grafana 서비스 실행 및 확인
+    ```bash
+    # Grafana 서비스 자동 시작 등록 및 시작
+    sudo systemctl enable --now grafana-server
+
+    # 서비스 상태 확인
+    systemctl status grafana-server
+    ```
+    ![alt text](<images/6-1-2.-3)-2.grafana 서비스 실행.png>)
+
+&emsp;**4) Grafana HTTP 서버 확인**
+Grafana 서비스가 성공적으로 실행되었는지 확인
+ 1. 기본 포트 3000 접근 확인 (curl)
+    ```bash
+    # 기본 포트 3000에 접근하여 응답이 오는지 확인
+    curl http://localhost:3000
+    ```
+    ![alt text](<images/6-1-2.-4)-1.grafana http 서버 확인.png>)
+    
+ 2. VM NAT 포트 포워딩 설정
+    ![alt text](<images/6-1-2.-4)-2.grafana http 서버 확인.png>)
+    
+ 3. 브라우저 접속 확인
+    ![alt text](<images/6-1-2.-4)-3.grafana http 서버 확인.png>)
 
 #### <a id="prometheus-grafana-integration"></a>6-1-3. Prometheus와 Grafana 연동
+&emsp;**1) Grafana 웹 접속** <br>
+&emsp;**2) Connections -> Data sources -> Prometheus** <br>
+&emsp;**3) Prometheus server URL 입력** <br>
+![alt text](<images/6-1-3.prometheus grafana 연동.png>)
 
 ---
 
