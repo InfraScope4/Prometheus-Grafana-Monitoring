@@ -302,8 +302,65 @@ Grafana 서비스가 성공적으로 실행되었는지 확인
 
 #### <a id="node-exporter"></a>6-2-1. Node Exporter 설치 및 구성
 &emsp;**1) Node Exporter 설치 (바이너리 방식)**  
+ - 최신 바이너리 다운로드 및 압축 해제
+    ```bash
+    cd /tmp
+
+    # Node Exporter 바이너리 다운로드
+    curl -LO https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
+
+    # 압축 해제
+    tar xvf node_exporter-1.9.1.linux-amd64.tar.gz
+    ```
+    ![alt text](<images/6-2-1.-1)-1.node exporter 설치.png>)
+
+ - 실행 파일 이동
+    ```bash
+    # 실행 파일 이동
+    sudo mv node_exporter-*/node_exporter /usr/local/bin/
+    ```
+    ![alt text](<images/6-2-1.-1)-2.node exporter 설치1.png>)
+    ![alt text](<images/6-2-1.-1)-2.node exporter 설치2.png>)
+
 &emsp;**2) Node Exporter 서비스 등록**  
+ - node_exporter.service 유닛 파일 생성 및 내용 작성
+    ```bash
+    # node_exporter.service 유닛 파일 생성 및 내용 작성
+    sudo tee /etc/systemd/system/node_exporter.service <<EOF
+    [Unit]
+    Description=Node Exporter
+    Wants=network-online.target
+    After=network-online.target
+
+    [Service]
+    User=prometheus
+    Group=prometheus
+    Type=simple
+    ExecStart=/usr/local/bin/node_exporter
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+    ```
+    ![alt text](<images/6-2-1.-2)-1.node exporter 서비스 등록.png>)
+  
+ - Node Exporter 서비스 등록 및 실행
+    ```bash
+    # systemd 데몬 재시작 (유닛 파일 반영)
+    sudo systemctl daemon-reload
+
+    # Node Exporter 서비스 자동 시작 등록 및 시작
+    sudo systemctl enable --now node_exporter
+
+    # 서비스 상태 확인
+    systemctl status node_exporter
+    ```
+    ![alt text](<images/6-2-1.-2)-2.node exporter 서비스 등록1.png>)
+    ![alt text](<images/6-2-1.-2)-2.node exporter 서비스 등록2.png>)
+
 &emsp;**3) Prometheus 설정**  
+
+
 &emsp;**4) 확인**
 
 #### <a id="mysql-exporter"></a>6-2-2. MySQL Exporter 설치 및 구성
