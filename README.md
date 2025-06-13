@@ -109,6 +109,114 @@
 ### <a id="basic-monitoring"></a>6-1. 기본 모니터링 시스템 구축
 
 #### <a id="prometheus-installation"></a>6-1-1. Prometheus 설치 (바이너리 방식)
+&emsp;**1) 설치 방식 선택 배경**  
+Prometheus는 다양한 설치 방식(바이너리, 패키지 매니저, Docker 등)을 지원하지만, 최신 버전 유지와 설정 유연성을 고려하여 바이너리 설치 방식을 선택 
+
+&emsp;**2) 설치 절차**
+ 1. Prometheus 전용 사용자 계정 생성
+    ```bash
+    sudo useradd --no-create-home --shell /bin/false prometheus
+    ```  
+
+ 2. 디렉터리 생성 및 권한 설정
+    ```bash
+    sudo mkdir /etc/prometheus
+    sudo mkdir /var/lib/prometheus
+    sudo chown prometheus:prometheus /var/lib/prometheus
+    ```
+    ![alt text](<images/6-1-1.-2)-2.prometheus 설치.png>)
+
+ 3. 최신 바이너리 다운로드 및 압축 해제
+    ```bash
+    cd /tmp
+
+    # GitHub Releases에서 최신 URL 확인 후 다운로드
+    curl -LO https://github.com/prometheus/prometheus/releases/download/v3.2.1/prometheus-3.2.1.linux-amd64.tar.gz
+
+    # 압축 해제
+    tar xvf prometheus-3.2.1.linux-amd64.tar.gz
+    ```
+    ![alt text](<images/6-1-1.-2)-3.prometheus 설치.png>) 
+
+ 4. 실행 파일 및 설정 파일 이동
+    ```bash
+    cd prometheus-3.2.1.linux-amd64/
+
+    # 실행 파일 이동
+    sudo mv prometheus promtool /usr/local/bin/
+
+    # 설정 파일 이동
+    sudo mv prometheus.yml /etc/prometheus/
+    ```
+    ![alt text](<images/6-1-1.-2)-4.prometheus 설치.png>)
+
+ 5. Prometheus 설정 파일 확인
+    ```bash
+    # Prometheus 서버가 정상적으로 실행되고 있는지 localhost 포트로 확인
+    curl localhost:9090
+
+    # Prometheus 설정 파일 내용 확인
+    sudo cat /etc/prometheus/prometheus.yml
+    ```
+    ![alt text](<images/6-1-1.-2)-5.prometheus 설정 파일 확인.png>)
+
+&emsp;**3) Prometheus 서비스 등록**  
+ 1. prometheus.service 유닛 파일 생성 및 내용 작성
+    ```bash
+    # 파일 존재 여부 확인
+    ls /etc/systemd/system
+
+    # prometheus.service 유닛 파일 생성 및 내용 작성
+    sudo tee /etc/systemd/system/prometheus.service <<EOF
+    [Unit]
+    Description=Prometheus
+    Wants=network-online.target
+    After=network-online.target
+
+    [Service]
+    User=prometheus
+    Group=prometheus
+    Type=simple
+    ExecStart=/usr/local/bin/prometheus \\
+      --config.file=/etc/prometheus/prometheus.yml \\
+      --storage.tsdb.path=/var/lib/prometheus \\
+      --web.listen-address=0.0.0.0:9090
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+    ```
+    ![alt text](<images/6-1-1.-3)-1.prometheus 서비스로 등록.png>)
+
+ 2. Prometheus 서비스 등록 및 실행 
+    ```bash
+    # systemd 데몬 재시작 (유닛 파일 반영)
+    sudo systemctl daemon-reload
+
+    # Prometheus 서비스 자동 시작 등록 및 시작
+    sudo systemctl enable --now prometheus
+
+    # 서비스 상태 확인
+    systemctl status prometheus
+    ```
+    ![alt text](<images/6-1-1.-3)-2.prometheus 서비스로 등록.png>)
+
+
+&emsp;**4) Prometheus HTTP 서버 확인** <br>
+Prometheus 서비스가 성공적으로 실행되었는지 확인
+ 1. 기본 포트 9090 접근 확인 (curl)
+    ```bash
+    # 기본 포트 9090에 접근하여 응답이 오는지 확인
+    curl http://localhost:9090
+    ```
+    ![alt text](<images/6-1-1.-4)-1.prometheus http 서버 확인.png>)
+
+ 2. VM NAT 포트 포워딩 설정
+    ![alt text](<images/6-1-1.-4)-2.prometheus http 서버 확인.png>)
+
+ 3. 브라우저 접속 확인
+    ![alt text](<images/6-1-1.-4)-3.prometheus http 서버 확인.png>)
+    아직 메트릭을 수집할 타겟(exporter) 이 등록되지 않았기 때문에 위와 같은 화면이 나옴
 
 #### <a id="grafana-installation"></a>6-1-2. Grafana 설치 (APT 패키지 방식)
 
