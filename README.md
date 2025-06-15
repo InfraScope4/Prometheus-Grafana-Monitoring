@@ -359,9 +359,43 @@ Grafana 서비스가 성공적으로 실행되었는지 확인
     ![alt text](<images/6-2-1.-2)-2.node exporter 서비스 등록2.png>)
 
 &emsp;**3) Prometheus 설정**  
+ - prometheus.yml 설정 파일 수정
+   ```bash
+   # Prometheus가 Node Exporter에서 수집한 시스템 메트릭을 가져올 수 있도록 설정 파일 수정
+   sudo nano /etc/prometheus/prometheus.yml
 
+   # 아래의 내용을 추가
+   scrape_configs:
+      - job_name: 'node'
+        static_configs:
+            - targets: ['localhost:9100']
 
-&emsp;**4) 확인**
+   # 수정한 파일 확인
+   sudo cat /etc/prometheus/prometheus.yml
+   ```
+   ![alt text](<images/6-2-1.-3)-1.prometheus 설정.png>)
+
+ - Prometheus 서비스 재시작 및 상태 확인
+   ```bash
+   # 서비스 재시작
+   sudo systemctl restart prometheus
+
+   # 서비스 상태 확인
+   sudo systemctl status prometheus
+   ```
+   ![alt text](<images/6-2-1.-3)-2.prometheus 설정.png>)
+
+&emsp;**4) 브라우저에서 확인**
+ - Prometheus 타겟 상태 확인 <br>
+ Node Exporter가 Prometheus에 정상적으로 등록되었는지 웹 브라우저에서 확인
+   ![alt text](<images/6-2-1.-4)-1.브라우저에서 확인.png>)
+
+ - PromQL로 메트릭 수집 확인 <br>
+ 쿼리 실행 시 localhost:9100으로부터 CPU 사용률 데이터를 정상적으로 가져오는지 확인
+   ![alt text](<images/6-2-1.-4)-2.브라우저에서 확인.png>)
+
+ - Grafana 대시보드에서 시각화 확인
+   ![alt text](<images/6-2-1.-4)-3.브라우저에서 확인.png>)
 
 #### <a id="mysql-exporter"></a>6-2-2. MySQL Exporter 설치 및 구성
 &emsp;**1) MySQL 설치**  
