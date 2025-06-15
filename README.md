@@ -89,13 +89,58 @@
 
 ### <a id="architecture"></a>3-1. 시스템 구성 및 아키텍처
 
+- **모니터링 대상**  
+   - 애플리케이션 서버(Spring Boot), 데이터베이스(MySQL), 웹 서버(Nginx), 호스트 시스템(Linux)  
+- **Exporter 및 메트릭 노출**  
+   - 각 대상에 설치된 Exporter(Node, MySQL, Nginx)와 Spring Boot Actuator(Micrometer)가 메트릭을 Prometheus 형식으로 노출 
+   - **Node Exporter**: 리눅스 서버의 CPU, 메모리, 디스크 등 시스템 지표 수집
+   - **MySQL Exporter**: MySQL 데이터베이스의 성능 및 상태 지표 수집
+   - **Nginx Exporter**: Nginx 웹 서버의 상태 및 성능 지표 수집 
+   - **Spring Boot Actuator/Micrometer**: Actuator와 Micrometer를 통해 내부 메트릭을 노출
+- **Prometheus**  
+   - Exporter 및 애플리케이션 메트릭 엔드포인트를 스크래핑하여 저장  
+- **Grafana**  
+   - Prometheus 데이터를 시각화하여 실시간 모니터링 및 대시보드 구성 
+- **부하 테스트 도구**
+   - 각 구성 요소의 성능을 검증하기 위한 부하 테스트 진행
+
 ### <a id="metrics-comparison"></a>3-2. 메트릭 노출 방식 비교
 
 #### <a id="exporter-metrics"></a>3-2-1. Exporter 방식 (Node, MySQL, Nginx Exporter)
+- **구현 방식**
+   - 각 대상 시스템별로 별도의 Exporter 프로세스를 설치하여, 해당 시스템의 메트릭을 Prometheus 형식으로 노출
+
+- **장점**
+   - 대상 시스템과 독립적으로 동작하여, 애플리케이션에 추가적인 부하를 주지 않고 다양한 시스템 지표를 수집
+
+- **단점**
+   - 추가 프로세스의 설치 및 관리가 필요하며, 각각의 Exporter에 맞는 설정 및 유지보수가 필요
 
 #### <a id="internal-metrics"></a>3-2-2. 내부 노출 방식 (Spring Boot Actuator + Micrometer)
+- **구현 방식**
+   - Spring Boot 애플리케이션이 자체적으로 Actuator와 Micrometer 라이브러리를 이용하여 /actuator/prometheus 등의 엔드포인트를 통해 메트릭을 노출
+
+- **장점**
+   - 애플리케이션 내부에서 직접 데이터를 제공하여 추가 외부 프로세스가 필요 없으며, 애플리케이션 특화 지표를 쉽게 제공
+
+- **단점**
+   - 애플리케이션 자체 리소스를 사용하므로, 메트릭 수집 시 애플리케이션에 부하가 추가
 
 ### <a id="workflow"></a>3-3. 워크플로우 및 연동
+1. Exporter 및 Actuator 설정
+   - Exporter 설치 및 활성화, Spring Boot 애플리케이션에 Actuator/Micrometer 의존성 및 설정 추가
+
+2. Prometheus 스크래핑 구성
+   - prometheus.yml에 Exporter와 /actuator/prometheus 엔드포인트를 타겟으로 등록
+
+3. 메트릭 수집
+   - Prometheus는 설정된 스크래핑 타겟(Exporter, Spring Boot 애플리케이션의 메트릭 엔드포인트)으로부터 정기적으로 데이터를 수집
+
+4. 데이터 저장 및 시각화
+   - 수집된 메트릭은 Prometheus에 저장되고, Grafana를 통해 대시보드로 시각화되어 모니터링 정보를 제공
+
+5. 부하 테스트 및 모니터링
+   - 각 구성 요소에 대해 부하 테스트를 수행하고, 성능 저하나 병목 현상을 모니터링
 
 ---
 
