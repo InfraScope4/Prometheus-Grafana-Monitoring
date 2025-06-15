@@ -33,12 +33,16 @@
 ---
 
 ## <a id="overview"></a>1. 📒 개요
+이 프로젝트는 `Prometheus`와 `Grafana`를 활용한 통합 모니터링 환경을 구축하기 위한 Lab 용도로 설계되었습니다.  
+`서버`, `데이터베이스`, `웹 서버`, `애플리케이션` 등 다양한 구성 요소에서 발생하는 메트릭을 수집·저장·시각화하며, `부하 테스트`를 통해 성능을 검증하고 문제를 조기에 탐지할 수 있는 모니터링 시스템입니다.
 
 ### <a id="project-goals"></a>1-1. 프로젝트 목표 🎯
 
 - Prometheus와 Grafana를 활용한 모니터링 시스템 구축 능력 향상
 
-- 다양한 Exporter(Node, MySQL, Spring Boot)를 통해 메트릭 수집 경험 확보
+- 다양한 메트릭 노출 방식(Exporter vs. Actuator/Micrometer) 이해
+
+- 다양한 Exporter(Node, MySQL, Nginx) 및 내부 노출 방식(Spring Boot Actuator/Micrometer)을 통해 메트릭 수집 경험 확보
 
 - 실제 부하 발생 상황에서의 시스템 상태 파악 및 대시보드 구성 능력 강화
 
