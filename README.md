@@ -798,9 +798,111 @@ ab -n 1000 -c 50 http://localhost:8080/test1
 ---
 
 ## <a id="troubleshooting"></a>8. 🔫 트러블슈팅
-- MySQL Exporter 실행 시 cnf 파일 권한 문제 발생 -> 권한 설정 변경하여 실행 필수
+### 🔴 문제 1
+Ubuntu 재부팅 후 Prometheus가 mysql-exporter 타겟(localhost:9104/metrics)에 접근하지 못하는 오류가 발생
+- 재부팅 전
+   <p float="left">
+   <img src="images/8.재부팅 전1.png" alt="재부팅 전1" width="42%" />
+   <img src="images/8.재부팅 전2.png" alt="재부팅 전2" width="48%" />
+   </p>
 
-![alt text](<images/8. 트러블슈팅_1.png>)
+- 재부팅 후
+   <p float="left">
+   <img src="images/8.재부팅 후1.png" alt="재부팅 후1" width="40%" />
+   <img src="images/8.재부팅 후2.png" alt="재부팅 후2" width="50%" />
+   </p>
+
+### 🧩 원인 분석 1
+해당 오류는 mysqld-exporter 프로세스가 VM 재부팅 후 자동으로 실행되지 않아 포트 9104에서 서비스되고 있지 않기 때문에 발생
+
+### 🧰 해결 방법 1
+서비스 등록하여 재부팅 시 자동 실행되도록 설정
+```bash
+# systemd 서비스 유닛 파일을 생성
+sudo tee /etc/systemd/system/mysqld_exporter.service <<EOF
+[Unit]
+Description=MySQL Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/mysqld_exporter \\
+  --config.my-cnf=/etc/.my.cnf \\
+  --web.listen-address=:9104
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# systemd 재시작 및 설정 반영
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+
+# 서비스 등록 및 시작
+sudo systemctl enable mysqld_exporter
+sudo systemctl start mysqld_exporter
+```
+
+### 🔥결과 1
+mysqld_exporter 서비스 실행 실패 
+```bash
+sudo systemctl status mysqld_exporter
+```
+![alt text](images/8.결과1.png)
+
+
+### 🔴 문제 2
+[🔥결과 1]의 mysqld_exporter 서비스 실행 실패 
+
+### 🧩 원인 분석 2
+```bash
+journalctl -u mysqld_exporter -f
+```
+![alt text](<images/8.원인 분석2.png>)
+```
+Error parsing host config" file=/etc/.my.cnf err="failed to load config from /etc/.my.cnf: open /etc/.my.cnf: permission denied"
+```
+➡️ /etc/.my.cnf 파일에 대해 mysqld_exporter (현재는 prometheus 사용자로 실행됨) 가 읽을 권한이 없어서 실패 <br>
+즉, MySQL Exporter 실행 시 cnf 파일 권한 문제 발생 
+
+### 🧰 해결 방법 2
+/etc/.my.cnf 파일의 소유자와 권한을 prometheus 계정이 읽을 수 있도록 변경하여 실행
+
+```bash
+# mysqld_exporter가 사용할 MySQL 인증 파일의 소유자를 prometheus로 설정
+sudo chown prometheus:prometheus /etc/.my.cnf
+
+# 인증 파일의 권한을 600으로 설정 
+sudo chmod 600 /etc/.my.cnf
+```
+![alt text](<images/8.해결 방법2.png>)
+
+```bash
+# 서비스 재시작
+sudo systemctl restart mysqld_exporter
+```
+
+### 🔥결과 2
+```bash
+# 서비스 상태 확인
+sudo systemctl status mysqld_exporter
+```
+![alt text](images/8.결과2-1.png)
+<p float="left">
+<img src="images/8.결과2-2.png" alt="결과2-2" width="41.5%" />
+<img src="images/8.결과2-3.png" alt="결과2-3" width="57%" />
+</p>
+
+- 재부팅 후 확인
+   <p float="left">
+   <img src="images/8.결과2-4.png" alt="결과2-4" width="46.5%" />
+   <img src="images/8.결과2-5.png" alt="결과2-5" width="51.5%" />
+   </p>
 
 ---
 
