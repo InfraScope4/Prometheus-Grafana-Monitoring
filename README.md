@@ -11,7 +11,7 @@
      - 3-2-1. [Exporter 방식 (Node, MySQL, Nginx Exporter)](#exporter-metrics)
      - 3-2-2. [내부 노출 방식 (Spring Boot Actuator + Micrometer)](#internal-metrics)
    - 3-3. [워크플로우 및 연동](#workflow)
-4. [🔎 사전 요구사항](#prerequisites)
+4. [📚 주요 개념](#concepts)
 5. [🚀 활용 기술](#technologies)
 6. [🏗️ 시스템 구축 및 실행](#implementation)
    - 6-1. [기본 모니터링 시스템 구축](#basic-monitoring)
@@ -144,7 +144,29 @@
 
 ---
 
-## <a id="prerequisites"></a>4. 🔎 사전 요구사항
+## <a id="concepts"></a>4. 📚 주요 개념
+
+- **스크래핑(Scraping)**  
+  Prometheus가 지정된 엔드포인트에서 메트릭을 주기적으로 긁어오는(process) 방식
+
+- **Exporter**  
+  시스템·서비스의 내부 지표를 Prometheus 형식으로 노출하는 별도 프로세스  
+  - Node Exporter: 호스트 시스템 지표(CPU, 메모리, 디스크)  
+  - MySQL Exporter: 데이터베이스 상태 정보  
+  - Nginx Exporter: 웹 서버 지표
+
+- **Actuator + Micrometer**  
+  Spring Boot 애플리케이션 내부에서 메트릭을 노출하기 위한 모듈 조합  
+  - Actuator: 운영용 엔드포인트 제공  
+  - Micrometer: 다양한 모니터링 시스템(Prometheus 등)과 연동 가능한 메트릭 수집 라이브러리
+
+- **Metric, Label, Target**  
+  - Metric: 수집되는 데이터 항목 <br>
+  (예: `http_requests_total`)  
+  - Label: 메트릭에 부착되는 메타데이터 <br>
+  (예: `method="GET", status="200"`)  
+  - Target: Prometheus가 스크래핑할 엔드포인트 <br>
+  (Exporter 또는 `/actuator/prometheus`)
 
 ---
 
