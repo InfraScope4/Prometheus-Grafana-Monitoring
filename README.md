@@ -172,6 +172,18 @@
 
 ## <a id="technologies"></a>5. 🚀 활용 기술
 
+
+| 분류      | 활용 기술    |
+| -------- | --------- |
+| **가상화**   | <img src="https://img.shields.io/badge/VirtualBox-183A61?style=flat-square&logo=virtualbox&logoColor=white" alt="VirtualBox" /> <img src="https://img.shields.io/badge/VMware-607078?style=flat-square&logo=vmware&logoColor=white" alt="VMware" /> |
+| **OS**            | <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black" alt="Linux" />   |
+| **모니터링**       | <img src="https://img.shields.io/badge/Prometheus-263238?style=flat-square&logo=prometheus&logoColor=white" alt="Prometheus" /> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" alt="Grafana" /> |
+| **Exporter**      | <img src="https://img.shields.io/badge/Node%20Exporter-000000?style=flat-square" alt="Node Exporter" /> <img src="https://img.shields.io/badge/MySQL%20Exporter-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL Exporter" /> <img src="https://img.shields.io/badge/Nginx%20Exporter-009639?style=flat-square&logo=nginx&logoColor=white" alt="Nginx Exporter" /> |
+| **애플리케이션**   | <img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white" alt="Spring Boot" /> <img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=java&logoColor=white" alt="Java" /> <img src="https://img.shields.io/badge/Actuator-6DB33F?style=flat-square&logo=spring&logoColor=white" alt="Actuator" /> <img src="https://img.shields.io/badge/Micrometer-ED8B00?style=flat-square" alt="Micrometer" />       |
+| **데이터베이스**   | <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL" />    |
+| **웹 서버**       | <img src="https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white" alt="Nginx" />     |
+| **로드 테스트**   | <img src="https://img.shields.io/badge/sysbench-000000?style=flat-square&logo=prometheus&logoColor=white" alt="sysbench" /> <img src="https://img.shields.io/badge/Apache%20Bench-005C9C?style=flat-square" alt="Apache Bench" />   |
+
 ---
 
 ## <a id="implementation"></a>6. 🏗️ 시스템 구축 및 실행
